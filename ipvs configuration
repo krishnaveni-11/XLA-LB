@@ -1,0 +1,19 @@
+sudo apt-get install -y ipvsadm
+
+https://man.cx/ipvsadm(8)
+
+sudo ipvsadm -A -t 172.17.0.5:80 -s rr
+sudo ipvsadm -L -n
+sudo ipvsadm -a -t 172.17.0.5:80 -r 172.17.0.3:80 -m
+ sudo ipvsadm -a -t 172.17.0.5:80 -r 172.17.0.4:80 -m
+sudo sysctl net | grep conntrack
+sudo sysctl -w net.ipv4.vs.conntrack=1
+sudo iptables -t nat -A POSTROUTING -o enp1s0 -j MASQUERADE
+sudo iptables -t nat -L -v -n
+sudo sysctl -w net.ipv4.ip_forward=1
+lb@lb:~$ sudo sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 1
+sudo ipvsadm -D -t 172.17.0.7:80
+
+curl http://172.17.0.5:80
+curl -v -o /dev/null 172.17.0.5
