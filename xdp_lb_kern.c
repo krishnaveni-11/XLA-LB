@@ -252,6 +252,11 @@ int xdp_load_balancer(struct xdp_md *ctx)
         eth->h_source[5] = LB;
 
         iph->check = iph_csum(iph);
+         value = bpf_map_lookup_elem(&tcp_packet_count_map, &key);
+        if (value) {
+            __sync_fetch_and_add(value, 1);
+            bpf_map_update_elem(&tcp_packet_count_map, &key, value, BPF_ANY);
+        }
         return XDP_TX;
     }
 
